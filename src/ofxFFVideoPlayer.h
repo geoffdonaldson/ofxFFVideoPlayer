@@ -1,13 +1,13 @@
 //
-//  ofxFFMPEGVideoPlayer.h
+//  ofxFFVideoPlayer.h
 //  
 //
 //  Created by Geoff Donaldson on 10/23/13.
 //
 //
 
-#ifndef _ofxFFMPEGVideoPlayer_h
-#define _ofxFFMPEGVideoPlayer_h
+#ifndef _ofxFFVideoPlayer_h
+#define _ofxFFVideoPlayer_h
 
 #include "ofMain.h"
 #include "ofPBO.h"
@@ -94,11 +94,11 @@ typedef struct AVData
 } AVData;
 
 
-class ofxFFMPEGVideoPlayer /*: ofBaseVideoPlayer*/ {
+class ofxFFVideoPlayer /*: ofBaseVideoPlayer*/ {
     
 public:
-    ofxFFMPEGVideoPlayer();
-    ~ofxFFMPEGVideoPlayer();
+    ofxFFVideoPlayer();
+    ~ofxFFVideoPlayer();
     
 	bool				loadMovie(string name);
 	void				close();

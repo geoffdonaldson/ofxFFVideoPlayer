@@ -1,17 +1,17 @@
 //
-//  ofxFFMPEGVideoPlayer.cpp
+//  ofxFFVideoPlayer.cpp
 //  
 //
 //  Created by Geoff Donaldson on 10/23/13.
 //
 //
 
-#include "ofxFFMPEGVideoPlayer.h"
+#include "ofxFFVideoPlayer.h"
 #include "image_formats.cl.h"
 
 #define EPS 0.000025	// epsilon for checking unsual results as taken from OpenCV FFmeg player
 
-ofxFFMPEGVideoPlayer::ofxFFMPEGVideoPlayer()
+ofxFFVideoPlayer::ofxFFVideoPlayer()
 {
     // init property variables
 	m_bIsFileOpen = false;
@@ -60,13 +60,13 @@ ofxFFMPEGVideoPlayer::ofxFFMPEGVideoPlayer()
 
 }
 
-ofxFFMPEGVideoPlayer::~ofxFFMPEGVideoPlayer()
+ofxFFVideoPlayer::~ofxFFVideoPlayer()
 {
 //    saveWav("/Users/geoff/Desktop/out.wav", wav);
     close();
 }
 
-bool ofxFFMPEGVideoPlayer::loadMovie(string name)
+bool ofxFFVideoPlayer::loadMovie(string name)
 {
 
 	m_strFileName = name;
@@ -159,7 +159,7 @@ bool ofxFFMPEGVideoPlayer::loadMovie(string name)
 	return m_bIsFileOpen;
 }
 
-void ofxFFMPEGVideoPlayer::close()
+void ofxFFVideoPlayer::close()
 {
     stop();
     
@@ -223,7 +223,7 @@ void ofxFFMPEGVideoPlayer::close()
 	}
 
 }
-void ofxFFMPEGVideoPlayer::update()
+void ofxFFVideoPlayer::update()
 {
     
     isFrameDecoded = false;
@@ -310,7 +310,7 @@ void ofxFFMPEGVideoPlayer::update()
 //    
 
 }
-void ofxFFMPEGVideoPlayer::play()
+void ofxFFVideoPlayer::play()
 {
 	if(!isImage())
 	{
@@ -319,12 +319,12 @@ void ofxFFMPEGVideoPlayer::play()
     
 }
 
-void ofxFFMPEGVideoPlayer::pause()
+void ofxFFVideoPlayer::pause()
 {
 	m_iState = ePaused;
 }
 
-void ofxFFMPEGVideoPlayer::stop()
+void ofxFFVideoPlayer::stop()
 {
  	m_lCurrentFrameNumber = -1;	// set to invalid, as it is not decoded yet
 	m_dTargetTimeInMs = 0;
@@ -334,19 +334,19 @@ void ofxFFMPEGVideoPlayer::stop()
    
 }
 
-bool ofxFFMPEGVideoPlayer::isFrameNew()
+bool ofxFFVideoPlayer::isFrameNew()
 {
     //update();
 //	long lTargetFrame = calculateFrameNumberFromTime(m_dTargetTimeInMs);
 //	return (lTargetFrame != m_lCurrentFrameNumber);
     return m_bHavePixelsChanged;
 }
-unsigned char * ofxFFMPEGVideoPlayer::getPixels()
+unsigned char * ofxFFVideoPlayer::getPixels()
 {
     return m_AVData.m_VideoData.m_pData;
 }
 
-ofTexture * ofxFFMPEGVideoPlayer::getTexture()
+ofTexture * ofxFFVideoPlayer::getTexture()
 {
     m_bHavePixelsChanged = false;
     
@@ -357,60 +357,60 @@ ofTexture * ofxFFMPEGVideoPlayer::getTexture()
 }
 // if your videoplayer needs to implement seperate texture and pixel returns for performance, implement this function to return a texture instead of a pixel array. see iPhoneVideoGrabber for reference
 
-float ofxFFMPEGVideoPlayer::getWidth()
+float ofxFFVideoPlayer::getWidth()
 {
     return m_AVData.m_VideoData.m_iWidth;
 }
 
-float ofxFFMPEGVideoPlayer::getHeight()
+float ofxFFVideoPlayer::getHeight()
 {
     return m_AVData.m_VideoData.m_iHeight;
 }
 
-bool ofxFFMPEGVideoPlayer::isPaused()
+bool ofxFFVideoPlayer::isPaused()
 {
     
 }
 
-bool ofxFFMPEGVideoPlayer::isLoaded()
+bool ofxFFVideoPlayer::isLoaded()
 {
     
 }
 
-bool ofxFFMPEGVideoPlayer::isPlaying()
+bool ofxFFVideoPlayer::isPlaying()
 {
     
 }
 
-bool ofxFFMPEGVideoPlayer::setPixelFormat(ofPixelFormat pixelFormat)
+bool ofxFFVideoPlayer::setPixelFormat(ofPixelFormat pixelFormat)
 {
     
 }
 
-ofPixelFormat ofxFFMPEGVideoPlayer::getPixelFormat()
+ofPixelFormat ofxFFVideoPlayer::getPixelFormat()
 {
     
 }
 
-void ofxFFMPEGVideoPlayer::setPosition(float pct)
+void ofxFFVideoPlayer::setPosition(float pct)
 {
     m_dTargetTimeInMs = pct;
 }
 
-void ofxFFMPEGVideoPlayer::setFrame(int frame)
+void ofxFFVideoPlayer::setFrame(int frame)
 {
     
     seekFrame(frame);
     //m_dTargetTimeInMs = ((float)(frame) * 1.0 / m_dFps * 1000.0);
 }
 
-int ofxFFMPEGVideoPlayer::getCurrentFrame()
+int ofxFFVideoPlayer::getCurrentFrame()
 {
     return m_lCurrentFrameNumber;
 }
 
 
-double ofxFFMPEGVideoPlayer::getFrameRate()
+double ofxFFVideoPlayer::getFrameRate()
 {
     double fps = r2d(m_pFormatContext->streams[m_iVideoStream]->r_frame_rate);
     
@@ -429,7 +429,7 @@ double ofxFFMPEGVideoPlayer::getFrameRate()
     return fps;
 }
 
-float ofxFFMPEGVideoPlayer::getDurationSec()
+float ofxFFVideoPlayer::getDurationSec()
 {
     double sec = (double)m_pFormatContext->duration / (double)AV_TIME_BASE;
     
@@ -447,7 +447,7 @@ float ofxFFMPEGVideoPlayer::getDurationSec()
 
 }
 
-int ofxFFMPEGVideoPlayer::getTotalNumFrames()
+int ofxFFVideoPlayer::getTotalNumFrames()
 {
     if (m_pFormatContext == NULL) {
         return -1;
@@ -468,19 +468,19 @@ int ofxFFMPEGVideoPlayer::getTotalNumFrames()
 /*-------------- FFMPEG Implementation ------------*/
 /*-------------------------------------------------*/
 
-double ofxFFMPEGVideoPlayer::dts_to_sec(int64_t dts)
+double ofxFFVideoPlayer::dts_to_sec(int64_t dts)
 {
     return (double)(dts - m_pFormatContext->streams[m_iVideoStream]->start_time) * r2d(m_pFormatContext->streams[m_iVideoStream]->time_base);
 }
 
-int64_t ofxFFMPEGVideoPlayer::dts_to_frame_number(int64_t dts)
+int64_t ofxFFVideoPlayer::dts_to_frame_number(int64_t dts)
 {
     double sec = dts_to_sec(dts);
     return (int64_t)(getFrameRate() * sec + 0.5);
 }
 
 
-bool ofxFFMPEGVideoPlayer::seekFrame(long lFrameNumber)
+bool ofxFFVideoPlayer::seekFrame(long lFrameNumber)
 {
     
 //    int frame_delta = lFrameNumber - m_pFormatContext->streams[0]-> frame_id;
@@ -588,7 +588,7 @@ bool ofxFFMPEGVideoPlayer::seekFrame(long lFrameNumber)
     
 }
 
-bool ofxFFMPEGVideoPlayer::seekTime(double dTimeInMs)
+bool ofxFFVideoPlayer::seekTime(double dTimeInMs)
 {
 	int iDirectionFlag = 0;
 	if(m_iDirection == eBackward)
@@ -623,7 +623,7 @@ bool ofxFFMPEGVideoPlayer::seekTime(double dTimeInMs)
 }
 
 
-bool ofxFFMPEGVideoPlayer::openVideoStream()
+bool ofxFFVideoPlayer::openVideoStream()
 {
 	// Get a pointer to the codec context for the video stream
 	m_pVideoCodecContext = m_pFormatContext->streams[m_iVideoStream]->codec;
@@ -666,7 +666,7 @@ bool ofxFFMPEGVideoPlayer::openVideoStream()
 	return true;
 }
 
-bool ofxFFMPEGVideoPlayer::openAudioStream()
+bool ofxFFVideoPlayer::openAudioStream()
 {
 	// Get a pointer to the codec context for the video stream
 	m_pAudioCodecContext = m_pFormatContext->streams[m_iAudioStream]->codec;
@@ -719,7 +719,7 @@ bool ofxFFMPEGVideoPlayer::openAudioStream()
 	return true;
 }
 
-void ofxFFMPEGVideoPlayer::retrieveFileInfo()
+void ofxFFVideoPlayer::retrieveFileInfo()
 {
 	m_iBitrate = m_pFormatContext->bit_rate / 1000.0;
     
@@ -742,21 +742,21 @@ void ofxFFMPEGVideoPlayer::retrieveFileInfo()
 	}
 }
 
-void ofxFFMPEGVideoPlayer::retrieveVideoInfo()
+void ofxFFVideoPlayer::retrieveVideoInfo()
 {
 	m_strVideoCodecName = std::string(m_pVideoCodecContext->codec->long_name);
 	m_AVData.m_VideoData.m_iWidth = m_pVideoCodecContext->width;
 	m_AVData.m_VideoData.m_iHeight = m_pVideoCodecContext->height;
 }
 
-void ofxFFMPEGVideoPlayer::retrieveAudioInfo()
+void ofxFFVideoPlayer::retrieveAudioInfo()
 {
 	m_strAudioCodecName = std::string(m_pAudioCodecContext->codec->long_name);
 	m_AVData.m_AudioData.m_iSampleRate = m_pAudioCodecContext->sample_rate;
 	m_AVData.m_AudioData.m_iChannels = m_pAudioCodecContext->channels;
 }
 
-void ofxFFMPEGVideoPlayer::dumpFFmpegInfo()
+void ofxFFVideoPlayer::dumpFFmpegInfo()
 {
 	std::cout << "ofxFFVideoPlayer" << std::endl;
 	std::cout << "Please regard the license of the here wrapped FFmpeg library, LGPL or GPL_V3 depending on enabled codecs and configuration" << std::endl;
@@ -765,7 +765,7 @@ void ofxFFMPEGVideoPlayer::dumpFFmpegInfo()
 	std::cout << "AVFormat configuration: " << avformat_configuration() << std::endl << std::endl;
 }
 
-AVPacket* ofxFFMPEGVideoPlayer::fetchAVPacket()
+AVPacket* ofxFFVideoPlayer::fetchAVPacket()
 {
 	AVPacket *pAVPacket = NULL;
     
@@ -776,7 +776,7 @@ AVPacket* ofxFFMPEGVideoPlayer::fetchAVPacket()
 		return NULL;
 }
 
-bool ofxFFMPEGVideoPlayer::decodeFrame()
+bool ofxFFVideoPlayer::decodeFrame()
 {
 	bool bRet = false;
 	
@@ -810,7 +810,7 @@ bool ofxFFMPEGVideoPlayer::decodeFrame()
 	return bRet;
 }
 
-bool ofxFFMPEGVideoPlayer::decodeVideoFrame(AVPacket* pAVPacket)
+bool ofxFFVideoPlayer::decodeVideoFrame(AVPacket* pAVPacket)
 {
 	int isFrameDecoded=0;
     int bytes = 0;
@@ -905,7 +905,7 @@ bool ofxFFMPEGVideoPlayer::decodeVideoFrame(AVPacket* pAVPacket)
 
 }
 
-void ofxFFMPEGVideoPlayer::saveWav(const std::string& filename, const Wav& wav)
+void ofxFFVideoPlayer::saveWav(const std::string& filename, const Wav& wav)
 {
     // see [url="https://ccrma.stanford.edu/courses/422/projects/WaveFormat/"]https://ccrma.stanford.edu/courses/422/projects/WaveFormat/[/url]
     std::ofstream file(filename.c_str(), std::ios::binary);
@@ -946,7 +946,7 @@ void ofxFFMPEGVideoPlayer::saveWav(const std::string& filename, const Wav& wav)
 }
 
 
-bool ofxFFMPEGVideoPlayer::decodeAudioFrame(AVPacket* pAVPacket)
+bool ofxFFVideoPlayer::decodeAudioFrame(AVPacket* pAVPacket)
 {
 	int isFrameDecoded=0;
     
@@ -997,7 +997,7 @@ bool ofxFFMPEGVideoPlayer::decodeAudioFrame(AVPacket* pAVPacket)
 	return true;
 }
 
-bool ofxFFMPEGVideoPlayer::decodeImage()
+bool ofxFFVideoPlayer::decodeImage()
 {
 	int isFrameDecoded=-1;
     
@@ -1032,80 +1032,80 @@ bool ofxFFMPEGVideoPlayer::decodeImage()
 	}
 }
 
-AVData& ofxFFMPEGVideoPlayer::getAVData()
+AVData& ofxFFVideoPlayer::getAVData()
 {
 	update();
 	return m_AVData;
 }
 
-VideoData& ofxFFMPEGVideoPlayer::getVideoData()
+VideoData& ofxFFVideoPlayer::getVideoData()
 {
 	//update();
 	return m_AVData.m_VideoData;
 }
 
-AudioData& ofxFFMPEGVideoPlayer::getAudioData()
+AudioData& ofxFFVideoPlayer::getAudioData()
 {    
     //update();
 	return m_AVData.m_AudioData;
 }
 
-std::string ofxFFMPEGVideoPlayer::getVideoCodecName()
+std::string ofxFFVideoPlayer::getVideoCodecName()
 {
 	return m_strVideoCodecName;
 }
 
-std::string ofxFFMPEGVideoPlayer::getAudioCodecName()
+std::string ofxFFVideoPlayer::getAudioCodecName()
 {
 	return m_strAudioCodecName;
 }
 
 
-int ofxFFMPEGVideoPlayer::getAudioChannels()
+int ofxFFVideoPlayer::getAudioChannels()
 {
 	return m_AVData.m_AudioData.m_iChannels;
 }
 
-int ofxFFMPEGVideoPlayer::getAudioSampleRate()
+int ofxFFVideoPlayer::getAudioSampleRate()
 {
 	return m_AVData.m_AudioData.m_iSampleRate;
 }
 
 
-long ofxFFMPEGVideoPlayer::calculateFrameNumberFromTime(long lTime)
+long ofxFFVideoPlayer::calculateFrameNumberFromTime(long lTime)
 {
 	long lTargetFrame = floor((double)lTime/1000.0 * m_dFps );	//the 0.5 is taken from the opencv player, this might be useful for floating point rounding problems to be on the safe side not to miss one frame
 	return lTargetFrame;
 }
 
-bool ofxFFMPEGVideoPlayer::hasVideo()
+bool ofxFFVideoPlayer::hasVideo()
 {
 	return m_iVideoStream >= 0;
 }
 
-bool ofxFFMPEGVideoPlayer::hasAudio()
+bool ofxFFVideoPlayer::hasAudio()
 {
 	return m_iAudioStream >= 0;
 }
 
 
-int ofxFFMPEGVideoPlayer::getPixConvType()
+int ofxFFVideoPlayer::getPixConvType()
 {
     return pix_conv_type;
 }
 
-void ofxFFMPEGVideoPlayer::setPixConvType(PIX_CONVERSION_TYPE type)
+void ofxFFVideoPlayer::setPixConvType(PIX_CONVERSION_TYPE type)
 {
     pix_conv_type = type;
 }
 
-bool ofxFFMPEGVideoPlayer::isImage()
+bool ofxFFVideoPlayer::isImage()
 {
 	return m_iBitrate<=0 && m_AVData.m_AudioData.m_iSampleRate<=0;
 }
 
 // helper function as taken from OpenCV ffmpeg reader
-double ofxFFMPEGVideoPlayer::r2d(AVRational r)
+double ofxFFVideoPlayer::r2d(AVRational r)
 {
     return r.num == 0 || r.den == 0 ? 0. : (double)r.num / (double)r.den;
 }
